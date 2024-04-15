@@ -42,19 +42,19 @@
     "types"
   ],
   "dependencies": {
-    "@noble/hashes": "^1.2.0",
-    "@scure/base": "^1.1.1",
-    "ow": "^1.1.1",
-    "wif": "^2.0.6"
+    "@noble/hashes": "1.4.0",
+    "@scure/base": "1.1.6",
+    "ow": "1.1.1",
+    "wif": "4.0.0"
   },
   "devDependencies": {
     "@types/node": "18.x",
     "nyc": "^15.0.0",
-    "prettier": "1.16.4",
+    "prettier": "1.19.1",
     "tape": "^4.13.2",
-    "tiny-secp256k1": "^2.2.1",
+    "tiny-secp256k1": "2.2.1",
     "tslint": "^6.1.0",
-    "typescript": "^5.4.2"
+    "typescript": "^5.4.5"
   },
   "author": "Daniel Cousens",
   "license": "MIT",
