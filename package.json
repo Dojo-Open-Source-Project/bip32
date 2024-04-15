@@ -1,6 +1,6 @@
 {
-  "name": "bip32",
-  "version": "4.0.0",
+  "name": "@samouraiwallet/bip32",
+  "version": "5.0.0",
   "description": "A BIP32 compatible library",
   "keywords": [
     "bip32",
@@ -10,8 +10,13 @@
   ],
   "main": "./src/index.js",
   "types": "./types/index.d.ts",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "type": "module",
+  "sideEffects": false,
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=16.0.0"
   },
   "scripts": {
     "build": "tsc -p ./tsconfig.json",
@@ -23,14 +28,14 @@
     "lint": "tslint -p tsconfig.json -c tslint.json",
     "nobuild:coverage-report": "nyc report --reporter=lcov",
     "nobuild:coverage": "nyc --check-coverage --branches 90 --functions 90 npm run nobuild:unit",
-    "nobuild:unit": "tape test/*.js",
+    "nobuild:unit": "tape test/*.cjs",
     "prettier": "prettier 'ts-src/**/*.ts' --ignore-path ./.prettierignore",
     "test": "npm run build && npm run format:ci && npm run lint && npm run nobuild:coverage",
     "unit": "npm run build && npm run nobuild:unit"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bitcoinjs/bip32.git"
+    "url": "git+https://code.samourai.io/dojo/bip32.git"
   },
   "files": [
     "src",
@@ -39,7 +44,7 @@
   "dependencies": {
     "@noble/hashes": "^1.2.0",
     "@scure/base": "^1.1.1",
-    "typeforce": "^1.11.5",
+    "ow": "^1.1.1",
     "wif": "^2.0.6"
   },
   "devDependencies": {
@@ -49,11 +54,11 @@
     "tape": "^4.13.2",
     "tiny-secp256k1": "^2.2.1",
     "tslint": "^6.1.0",
-    "typescript": "4.7"
+    "typescript": "^5.4.2"
   },
   "author": "Daniel Cousens",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/bitcoinjs/bip32/issues"
+    "url": "https://code.samourai.io/dojo/bip32/-/issues"
   }
 }
