@@ -1,9 +1,9 @@
-import * as crypto from './crypto';
-import { testEcc } from './testecc';
+import * as crypto from './crypto.js';
+import { testEcc } from './testecc.js';
 import { base58check } from '@scure/base';
 import { sha256 } from '@noble/hashes/sha256';
-import { Uint8ArrayType, Uint8ArrayTypeN } from './uint8array-utils';
-const typeforce = require('typeforce');
+import ow from 'ow';
+
 const bs58check = base58check(sha256);
 
 interface Network {
@@ -91,13 +91,13 @@ export interface TinySecp256k1Interface {
 
 export function BIP32Factory(ecc: TinySecp256k1Interface): BIP32API {
   testEcc(ecc);
-  const UINT256_TYPE = Uint8ArrayTypeN(32);
-  const NETWORK_TYPE = typeforce.compile({
-    wif: typeforce.UInt8,
-    bip32: {
-      public: typeforce.UInt32,
-      private: typeforce.UInt32,
-    },
+  const UINT256_TYPE = ow.uint8Array.length(32);
+  const NETWORK_TYPE = ow.object.partialShape({
+    wif: ow.number.uint8,
+    bip32: ow.object.exactShape({
+      public: ow.number.uint32,
+      private: ow.number.uint32,
+    }),
   });
 
   const BITCOIN: Network = {
@@ -114,16 +114,6 @@ export function BIP32Factory(ecc: TinySecp256k1Interface): BIP32API {
 
   const HIGHEST_BIT = 0x80000000;
   const UINT31_MAX = Math.pow(2, 31) - 1;
-
-  function BIP32Path(value: string): boolean {
-    return (
-      typeforce.String(value) && value.match(/^(m\/)?(\d+'?\/)*\d+'?$/) !== null
-    );
-  }
-
-  function UInt31(value: number): boolean {
-    return typeforce.UInt32(value) && value <= UINT31_MAX;
-  }
 
   function toXOnly(pubKey: Uint8Array) {
     return pubKey.length === 32 ? pubKey : pubKey.subarray(1, 33);
@@ -197,7 +187,7 @@ export function BIP32Factory(ecc: TinySecp256k1Interface): BIP32API {
       private __PARENT_FINGERPRINT = 0x00000000,
     ) {
       super(__D, __Q);
-      typeforce(NETWORK_TYPE, network);
+      ow(network, NETWORK_TYPE);
     }
 
     get depth(): number {
@@ -282,7 +272,10 @@ export function BIP32Factory(ecc: TinySecp256k1Interface): BIP32API {
 
     // https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki#child-key-derivation-ckd-functions
     derive(index: number): BIP32Interface {
-      typeforce(typeforce.UInt32, index);
+      ow(
+        index,
+        ow.number.message('Expected UInt32').uint32.message('Expected UInt32'),
+      );
 
       const isHardened = index >= HIGHEST_BIT;
       const data = new Uint8Array(37);
@@ -354,14 +347,26 @@ export function BIP32Factory(ecc: TinySecp256k1Interface): BIP32API {
     }
 
     deriveHardened(index: number): BIP32Interface {
-      typeforce(UInt31, index);
+      ow(
+        index,
+        ow.number
+          .message('Expected UInt31')
+          .uint32.message('Expected UInt31')
+          .is(value => value <= UINT31_MAX)
+          .message('Expected UInt31'),
+      );
 
       // Only derives hardened private keys by default
       return this.derive(index + HIGHEST_BIT);
     }
 
     derivePath(path: string): BIP32Interface {
-      typeforce(BIP32Path, path);
+      ow(
+        path,
+        ow.string
+          .is(value => value.match(/^(m\/)?(\d+'?\/)*\d+'?$/) !== null)
+          .message(value => `Expected BIP32Path, got ${value}`),
+      );
 
       let splitPath = path.split('/');
       if (splitPath[0] === 'm') {
@@ -506,12 +511,12 @@ export function BIP32Factory(ecc: TinySecp256k1Interface): BIP32API {
     index?: number,
     parentFingerprint?: number,
   ): BIP32Interface {
-    typeforce(
-      {
+    ow(
+      { privateKey, chainCode },
+      ow.object.exactShape({
         privateKey: UINT256_TYPE,
         chainCode: UINT256_TYPE,
-      },
-      { privateKey, chainCode },
+      }),
     );
     network = network || BITCOIN;
 
@@ -544,12 +549,12 @@ export function BIP32Factory(ecc: TinySecp256k1Interface): BIP32API {
     index?: number,
     parentFingerprint?: number,
   ): BIP32Interface {
-    typeforce(
-      {
-        publicKey: Uint8ArrayTypeN(33),
-        chainCode: UINT256_TYPE,
-      },
+    ow(
       { publicKey, chainCode },
+      ow.object.exactShape({
+        publicKey: ow.uint8Array.length(33),
+        chainCode: UINT256_TYPE,
+      }),
     );
     network = network || BITCOIN;
 
@@ -568,7 +573,7 @@ export function BIP32Factory(ecc: TinySecp256k1Interface): BIP32API {
   }
 
   function fromSeed(seed: Uint8Array, network?: Network): BIP32Interface {
-    typeforce(Uint8ArrayType, seed);
+    ow(seed, ow.uint8Array);
     if (seed.length < 16)
       throw new TypeError('Seed should be at least 128 bits');
     if (seed.length > 64)

@@ -1,22 +1,18 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.BIP32Factory = void 0;
-const crypto = require("./crypto");
-const testecc_1 = require("./testecc");
-const base_1 = require("@scure/base");
-const sha256_1 = require("@noble/hashes/sha256");
-const uint8array_utils_1 = require("./uint8array-utils");
-const typeforce = require('typeforce');
-const bs58check = (0, base_1.base58check)(sha256_1.sha256);
-function BIP32Factory(ecc) {
-    (0, testecc_1.testEcc)(ecc);
-    const UINT256_TYPE = (0, uint8array_utils_1.Uint8ArrayTypeN)(32);
-    const NETWORK_TYPE = typeforce.compile({
-        wif: typeforce.UInt8,
-        bip32: {
-            public: typeforce.UInt32,
-            private: typeforce.UInt32,
-        },
+import * as crypto from './crypto.js';
+import { testEcc } from './testecc.js';
+import { base58check } from '@scure/base';
+import { sha256 } from '@noble/hashes/sha256';
+import ow from 'ow';
+const bs58check = base58check(sha256);
+export function BIP32Factory(ecc) {
+    testEcc(ecc);
+    const UINT256_TYPE = ow.uint8Array.length(32);
+    const NETWORK_TYPE = ow.object.partialShape({
+        wif: ow.number.uint8,
+        bip32: ow.object.exactShape({
+            public: ow.number.uint32,
+            private: ow.number.uint32,
+        }),
     });
     const BITCOIN = {
         messagePrefix: '\x18Bitcoin Signed Message:\n',
@@ -31,12 +27,6 @@ function BIP32Factory(ecc) {
     };
     const HIGHEST_BIT = 0x80000000;
     const UINT31_MAX = Math.pow(2, 31) - 1;
-    function BIP32Path(value) {
-        return (typeforce.String(value) && value.match(/^(m\/)?(\d+'?\/)*\d+'?$/) !== null);
-    }
-    function UInt31(value) {
-        return typeforce.UInt32(value) && value <= UINT31_MAX;
-    }
     function toXOnly(pubKey) {
         return pubKey.length === 32 ? pubKey : pubKey.subarray(1, 33);
     }
@@ -101,7 +91,7 @@ function BIP32Factory(ecc) {
             this.__DEPTH = __DEPTH;
             this.__INDEX = __INDEX;
             this.__PARENT_FINGERPRINT = __PARENT_FINGERPRINT;
-            typeforce(NETWORK_TYPE, network);
+            ow(network, NETWORK_TYPE);
         }
         get depth() {
             return this.__DEPTH;
@@ -162,7 +152,7 @@ function BIP32Factory(ecc) {
         }
         // https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki#child-key-derivation-ckd-functions
         derive(index) {
-            typeforce(typeforce.UInt32, index);
+            ow(index, ow.number.message('Expected UInt32').uint32.message('Expected UInt32'));
             const isHardened = index >= HIGHEST_BIT;
             const data = new Uint8Array(37);
             const dataView = new DataView(data.buffer);
@@ -211,12 +201,18 @@ function BIP32Factory(ecc) {
             return hd;
         }
         deriveHardened(index) {
-            typeforce(UInt31, index);
+            ow(index, ow.number
+                .message('Expected UInt31')
+                .uint32.message('Expected UInt31')
+                .is(value => value <= UINT31_MAX)
+                .message('Expected UInt31'));
             // Only derives hardened private keys by default
             return this.derive(index + HIGHEST_BIT);
         }
         derivePath(path) {
-            typeforce(BIP32Path, path);
+            ow(path, ow.string
+                .is(value => value.match(/^(m\/)?(\d+'?\/)*\d+'?$/) !== null)
+                .message(value => `Expected BIP32Path, got ${value}`));
             let splitPath = path.split('/');
             if (splitPath[0] === 'm') {
                 if (this.parentFingerprint)
@@ -316,10 +312,10 @@ function BIP32Factory(ecc) {
         return fromPrivateKeyLocal(privateKey, chainCode, network);
     }
     function fromPrivateKeyLocal(privateKey, chainCode, network, depth, index, parentFingerprint) {
-        typeforce({
+        ow({ privateKey, chainCode }, ow.object.exactShape({
             privateKey: UINT256_TYPE,
             chainCode: UINT256_TYPE,
-        }, { privateKey, chainCode });
+        }));
         network = network || BITCOIN;
         if (!ecc.isPrivate(privateKey))
             throw new TypeError('Private key not in range [1, n)');
@@ -329,10 +325,10 @@ function BIP32Factory(ecc) {
         return fromPublicKeyLocal(publicKey, chainCode, network);
     }
     function fromPublicKeyLocal(publicKey, chainCode, network, depth, index, parentFingerprint) {
-        typeforce({
-            publicKey: (0, uint8array_utils_1.Uint8ArrayTypeN)(33),
+        ow({ publicKey, chainCode }, ow.object.exactShape({
+            publicKey: ow.uint8Array.length(33),
             chainCode: UINT256_TYPE,
-        }, { publicKey, chainCode });
+        }));
         network = network || BITCOIN;
         // verify the X coordinate is a point on the curve
         if (!ecc.isPoint(publicKey))
@@ -340,7 +336,7 @@ function BIP32Factory(ecc) {
         return new BIP32(undefined, publicKey, chainCode, network, depth, index, parentFingerprint);
     }
     function fromSeed(seed, network) {
-        typeforce(uint8array_utils_1.Uint8ArrayType, seed);
+        ow(seed, ow.uint8Array);
         if (seed.length < 16)
             throw new TypeError('Seed should be at least 128 bits');
         if (seed.length > 64)
@@ -359,4 +355,3 @@ function BIP32Factory(ecc) {
         fromPrivateKey,
     };
 }
-exports.BIP32Factory = BIP32Factory;

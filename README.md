@@ -1,5 +1,12 @@
-# bip32
-[![Github CI](https://github.com/bitcoinjs/bip32/actions/workflows/main_ci.yml/badge.svg)](https://github.com/bitcoinjs/bip32/actions/workflows/main_ci.yml) [![NPM](https://img.shields.io/npm/v/bip32.svg)](https://www.npmjs.org/package/bip32) [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
+# @samouraiwallet/bip32
+
+This is a fork of the [original bip32 library](https://github.com/bitcoinjs/bip32) with minor changes:
+- codebase updated to use UInt8Array instead of Buffer - thus making this library browser-compatible without any shims
+- package type changed to ESModule instead of CommonJS
+- switched from `typeforce` to `ow` for better type safety
+- updated tests to reflect these changes
+
+## Original Readme
 
 A [BIP32](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki) compatible library written in TypeScript with transpiled JavaScript committed to git.
 

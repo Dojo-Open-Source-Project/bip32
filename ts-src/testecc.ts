@@ -1,6 +1,6 @@
 import { hexToBytes } from '@noble/hashes/utils';
-import { TinySecp256k1Interface } from './bip32';
-import { areUint8ArraysEqual } from './uint8array-utils';
+import { TinySecp256k1Interface } from './bip32.js';
+import { areUint8ArraysEqual } from './uint8array-utils.js';
 
 const h = (hex: string): Uint8Array => hexToBytes(hex);
 

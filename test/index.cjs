@@ -1,8 +1,12 @@
-let BIP32Creator = require('..').default
+//let BIP32Creator = require('..').default
 let { bytesToHex, hexToBytes } = require('@noble/hashes/utils')
 let tape = require('tape')
 let fixtures = require('./fixtures/index.json')
 let ecc
+let BIP32Creator
+import('../src/index.js').then(lib => {
+  BIP32Creator = lib.default
+}).then(() => {
 import('tiny-secp256k1').then(lib => {
   ecc = lib
   return BIP32Creator(lib)
@@ -195,7 +199,7 @@ tape('throws on wrong types', (t) => {
 
   t.throws(() => {
     BIP32.fromPrivateKey(new Uint8Array(2), ONES)
-  }, /Expected property "privateKey" of type Uint8Array\(Length: 32\), got Uint8Array\(Length: 2\)/)
+  }, /Expected property Uint8Array `privateKey` to have length `32`, got /)
 
   t.throws(() => {
     BIP32.fromPrivateKey(ZERO, ONES)
@@ -323,5 +327,6 @@ tape('tweak - neutered', (t) => {
   t.equal(signer.verify(seed, signatureLowR), false)
   t.equal(signer.verifySchnorr(hash, schnorrsig), true)
   t.equal(signer.verifySchnorr(seed, schnorrsig), false)
+})
 })
 })
