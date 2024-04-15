@@ -376,19 +376,16 @@ export function BIP32Factory(ecc: TinySecp256k1Interface): BIP32API {
         splitPath = splitPath.slice(1);
       }
 
-      return splitPath.reduce(
-        (prevHd, indexStr) => {
-          let index;
-          if (indexStr.slice(-1) === `'`) {
-            index = parseInt(indexStr.slice(0, -1), 10);
-            return prevHd.deriveHardened(index);
-          } else {
-            index = parseInt(indexStr, 10);
-            return prevHd.derive(index);
-          }
-        },
-        this as BIP32Interface,
-      );
+      return splitPath.reduce((prevHd, indexStr) => {
+        let index;
+        if (indexStr.slice(-1) === `'`) {
+          index = parseInt(indexStr.slice(0, -1), 10);
+          return prevHd.deriveHardened(index);
+        } else {
+          index = parseInt(indexStr, 10);
+          return prevHd.derive(index);
+        }
+      }, this as BIP32Interface);
     }
 
     tweak(t: Uint8Array): Signer {
