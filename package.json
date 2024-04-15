@@ -1,6 +1,6 @@
 {
   "name": "@samouraiwallet/bip32",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "A BIP32 compatible library",
   "keywords": [
     "bip32",
@@ -11,7 +11,8 @@
   "main": "./src/index.js",
   "types": "./types/index.d.ts",
   "exports": {
-    ".": "./src/index.js"
+    "import": "./src/index.js",
+    "types": "./types/index.d.ts"
   },
   "type": "module",
   "sideEffects": false,
@@ -37,6 +38,7 @@
     "type": "git",
     "url": "git+https://code.samourai.io/dojo/bip32.git"
   },
+  "homepage": "https://code.samourai.io/dojo/bip32",
   "files": [
     "src",
     "types"
