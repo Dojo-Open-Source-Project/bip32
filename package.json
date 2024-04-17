@@ -1,6 +1,6 @@
 {
   "name": "@samouraiwallet/bip32",
-  "version": "5.0.1",
+  "version": "5.1.0",
   "description": "A BIP32 compatible library",
   "keywords": [
     "bip32",
@@ -8,16 +8,20 @@
     "bitcoin",
     "secp256k1"
   ],
-  "main": "./src/index.js",
-  "types": "./types/index.d.ts",
   "exports": {
-    "import": "./src/index.js",
-    "types": "./types/index.d.ts"
+    ".": {
+      "import": "./src/index.js",
+      "types": "./types/index.d.ts"
+    },
+    "./crypto": {
+      "import": "./src/crypto.js",
+      "types": "./types/crypto.d.ts"
+    }
   },
   "type": "module",
   "sideEffects": false,
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=16.6.0"
   },
   "scripts": {
     "build": "tsc -p ./tsconfig.json",
