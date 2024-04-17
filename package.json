@@ -1,6 +1,6 @@
 {
   "name": "@samouraiwallet/bip32",
-  "version": "5.0.1",
+  "version": "5.1.0",
   "description": "A BIP32 compatible library",
   "keywords": [
     "bip32",
