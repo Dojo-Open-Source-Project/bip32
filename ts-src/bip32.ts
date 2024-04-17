@@ -1,10 +1,6 @@
 import * as crypto from './crypto.js';
 import { testEcc } from './testecc.js';
-import { base58check } from '@scure/base';
-import { sha256 } from '@noble/hashes/sha256';
 import ow from 'ow';
-
-const bs58check = base58check(sha256);
 
 interface Network {
   wif: number;
@@ -267,7 +263,7 @@ export function BIP32Factory(ecc: TinySecp256k1Interface): BIP32API {
         buffer.set(this.publicKey, 45);
       }
 
-      return bs58check.encode(buffer);
+      return crypto.bs58check.encode(buffer);
     }
 
     // https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki#child-key-derivation-ckd-functions
@@ -431,7 +427,7 @@ export function BIP32Factory(ecc: TinySecp256k1Interface): BIP32API {
   }
 
   function fromBase58(inString: string, network?: Network): BIP32Interface {
-    const buffer = bs58check.decode(inString);
+    const buffer = crypto.bs58check.decode(inString);
     const bufferView = new DataView(buffer.buffer);
     if (buffer.length !== 78) throw new TypeError('Invalid buffer length');
     network = network || BITCOIN;
