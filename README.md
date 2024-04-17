@@ -18,7 +18,7 @@ TypeScript
 ``` typescript
 import BIP32Factory from 'bip32';
 import * as ecc from 'tiny-secp256k1';
-import { BIP32Interface } from 'bip32';
+import type { BIP32Interface } from 'bip32';
 // You must wrap a tiny-secp256k1 compatible implementation
 const bip32 = BIP32Factory(ecc);
 
@@ -31,14 +31,14 @@ const child: BIP32Interface = node.derivePath('m/0/0');
 NodeJS
 
 ``` javascript
-const ecc = require('tiny-secp256k1')
-const { BIP32Factory } = require('bip32')
+import BIP32Factory from 'bip32';
+import * as ecc from 'tiny-secp256k1';
 // You must wrap a tiny-secp256k1 compatible implementation
-const bip32 = BIP32Factory(ecc)
+const bip32 = BIP32Factory(ecc);
 
-const node = bip32.fromBase58('xprv9s21ZrQH143K3QTDL4LXw2F7HEK3wJUD2nW2nRk4stbPy6cq3jPPqjiChkVvvNKmPGJxWUtg6LnF5kejMRNNU3TGtRBeJgk33yuGBxrMPHi')
+const node = bip32.fromBase58('xprv9s21ZrQH143K3QTDL4LXw2F7HEK3wJUD2nW2nRk4stbPy6cq3jPPqjiChkVvvNKmPGJxWUtg6LnF5kejMRNNU3TGtRBeJgk33yuGBxrMPHi');
 
-const child = node.derivePath('m/0/0')
+const child = node.derivePath('m/0/0');
 ```
 
 ## LICENSE [MIT](LICENSE)
