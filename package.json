@@ -40,9 +40,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://code.samourai.io/dojo/bip32.git"
+    "url": "https://github.com/Dojo-Open-Source-Project/bip32.git"
   },
-  "homepage": "https://code.samourai.io/dojo/bip32",
+  "homepage": "https://github.com/Dojo-Open-Source-Project/bip32",
   "files": [
     "src",
     "types"
@@ -65,6 +65,6 @@
   "author": "Daniel Cousens",
   "license": "MIT",
   "bugs": {
-    "url": "https://code.samourai.io/dojo/bip32/-/issues"
+    "url": "https://github.com/Dojo-Open-Source-Project/bip32/issues"
   }
 }
